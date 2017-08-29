@@ -1,0 +1,22 @@
+#!/bin/sh
+
+set -e
+
+THIS_PACKAGE=libegl1
+THIS_SCRIPT=prerm
+
+case "$1" in
+  remove)
+  # Use alternatives to make it easier to switch between libglvnd and 3rd-party vendor modules
+  update-alternatives --remove \
+    ${DEB_HOST_MULTIARCH}_egl_conf \
+    /usr/lib/${DEB_HOST_MULTIARCH}/libglvnd-egl/ld.so.conf
+
+  # ldconfig needs to be run immediately as we're changing /etc/ld.so.conf.d/ with alternatives.
+  ldconfig
+
+esac
+
+#DEBHELPER#
+
+exit 0

@@ -3,6 +3,24 @@ libglvnd (0.2.999+git20170802-3endless1) master; urgency=medium
   * control: Adjust Breaks/Replaces to match mesa upload which enabled
     GLVND on EOS.
 
+  * Use alternatives for EGL and GLESv2
+
+    Use Debian alternatives for libEGL and libGLESv2, so they can coexist
+    with vendor-provided implementations which do not support libglvnd, like
+    Amlogic's Mali libEGL and libGLESv2.
+
+    debian/rules:
+      - Create ld.so.conf for libEGL and libGLESv2.
+      - Generate pkg scripts from the corresponding .in files.
+    Removed:
+      -debian/libegl1.install
+      -debian/libgles2.install
+    Added:
+      +debian/libegl1.install.in
+      +debian/libegl1.postinst.in
+      +debian/libegl1.prerm.in
+      +debian/libgles2.install.in
+
   https://phabricator.endlessm.com/T18579
 
  -- João Paulo Rechi Vita <jprvita@endlessm.com>  Mon, 28 Aug 2017 22:16:28 -0700

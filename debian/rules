@@ -3,6 +3,14 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+override_dh_auto_install:
+	dh_auto_install
+	for file in debian/*.in; \
+	do \
+		sed -e"s,\$${DEB_HOST_MULTIARCH},$(DEB_HOST_MULTIARCH),g" \
+			$${file} > $${file%%.in}; \
+	done
+
 override_dh_install:
 	find debian/tmp -name '*.la' -delete
 
@@ -10,6 +18,10 @@ override_dh_install:
 	rm -f debian/tmp/usr/lib/*/libGLESv1*
 
 	dh_install --fail-missing
+
+	# Create an ld.so.conf for libEGL and libGLESv2
+	echo "/usr/lib/$(DEB_HOST_MULTIARCH)/libglvnd-egl" \
+	  > $(CURDIR)/debian/libegl1/usr/lib/$(DEB_HOST_MULTIARCH)/libglvnd-egl/ld.so.conf
 
 # needs X
 override_dh_auto_test:
